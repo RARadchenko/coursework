@@ -16,6 +16,10 @@
     margin-top: 10px;
 }
 
-.tools #selected{
+.tools li:hover{
+    background-color: #e7eded;
+}
+
+.tools .selected{
     background-color: #e7eded;
 }

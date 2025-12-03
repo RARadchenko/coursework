@@ -1,4 +1,4 @@
 <?php
 echo json_encode([
-    "store" => "Магазин № " . rand(1, 1000)
+    "store" => "Магазин № " . rand(1, 20)
 ]);
