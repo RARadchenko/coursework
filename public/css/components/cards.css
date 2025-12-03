@@ -1,0 +1,51 @@
+.goods{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: start;
+
+    flex: 1;   /* або будь-яка потрібна тобі висота */
+    overflow-y: auto;    /* вертикальний скрол тільки всередині */
+    overflow-x: hidden;  /* щоб не з'являвся горизонтальний */
+}
+
+.card{
+    width: 200px;
+    max-height: 270px;
+    background-color: #fff;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.1);
+    gap: 20px;
+}
+
+.card>img{
+    width: 90%;
+}
+
+.add-button{
+    background-color: #3686f9;
+    color: #fff;
+    border: none;
+    height: 35px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.add-button:hover{
+    background-color: #0650b7;
+}
+
+.card>button{
+    background-color: #3686f9;
+    color: #fff;
+    border: none;
+    height: 35px;
+}
+
+.card>button:hover{
+    background-color: #0650b7;
+}

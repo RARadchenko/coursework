@@ -1,0 +1,32 @@
+.dropdown-list {
+    position: relative;       /* база для абсолютного меню */
+    cursor: pointer;
+    list-style: none;
+}
+
+.dropdown-list > ul {
+    position: absolute;
+    top: 100%;                /* під тригером */
+    width: max-content;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 5px 0;
+    margin: 0;
+    list-style: none;
+
+    display: none;            /* сховане */
+    z-index: 999;             /* поверх інших */
+}
+
+.dropdown-list.show > ul {
+    display: block;           /* показати меню */
+}
+
+.dropdown-list ul li {
+    padding: 6px 15px;
+    cursor: pointer;
+}
+
+.dropdown-list ul li:hover {
+    background: #eee;
+}

@@ -1,0 +1,33 @@
+.offer-button{
+    display: inline-block;
+    height: auto;
+    background-color: #3686f9;
+    border-radius: 10px;
+    color: #fff;
+    text-align: center;
+    max-width: 300px;
+    height: auto;
+    display: flex;
+    box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.1);
+}
+
+.offer-button:hover{
+    background-color: #0650b7;
+}
+
+.offer-button::before{
+content: "";
+  display: block;
+  width: 128px;
+  height: 100%;
+  background-image: url("../../img/icons/shopping.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin: auto 0;
+}
+
+.offer-button>p{
+    word-break: normal;
+    margin: auto 0;
+    padding: 20px 0;
+}

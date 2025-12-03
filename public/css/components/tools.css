@@ -1,0 +1,21 @@
+.desc-paragraf{
+    color: #b4b8b8;
+    font-size: 28px;
+    letter-spacing: -2px;
+}
+
+.tools{
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.1);
+}
+
+.tools>ul{
+    background-color: #fff;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.tools #selected{
+    background-color: #e7eded;
+}
