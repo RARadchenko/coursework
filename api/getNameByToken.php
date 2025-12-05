@@ -1,5 +1,10 @@
 <?php
-$names = ['Альфа', 'Бета', 'Сігма'];
+require_once __DIR__ . '/../core/database.php';
+require_once __DIR__ . '/../core/models/User.php';
+
+$db = DB::connect($config['db_path']);
+
+$users = User::getLoginById($db, 1);
 echo json_encode([
-    "name" => $names[array_rand($names)]
+    "name" => $users
 ]);

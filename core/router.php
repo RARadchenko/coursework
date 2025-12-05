@@ -1,5 +1,8 @@
 <?php
 
+$config = require __DIR__ . '/config.php';
+global $config;
+
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 //Повернення базової сторінки при заході
