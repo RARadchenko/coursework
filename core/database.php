@@ -106,6 +106,21 @@ CREATE TABLE order_items (
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
 
+CREATE TABLE user_tokens (
+    token_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER UNIQUE NOT NULL,
+    token TEXT UNIQUE NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TRIGGER update_tokens_timestamp
+AFTER UPDATE ON user_tokens
+FOR EACH ROW
+BEGIN
+    UPDATE user_tokens SET updated_at = CURRENT_TIMESTAMP WHERE token_id = NEW.token_id;
+END;
 
         ";
 

@@ -38,6 +38,13 @@ class User
         return $passwordHash; 
 }
 
+        public static function getIdByLogin($db, $login) {
+        $stmt = $db->prepare("SELECT user_id FROM users WHERE login = ?");
+        $stmt->execute([$login]);
+        $id = $stmt->fetchColumn(0);
+        return $id; 
+}
+
         public static function getRoleByLogin($db, $login) {
         $stmt = $db->prepare("SELECT role_id FROM users WHERE login = ?");
         $stmt->execute([$login]);

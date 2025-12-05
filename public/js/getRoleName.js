@@ -1,6 +1,10 @@
+const tokenValue = sessionStorage.getItem('authToken');
 (async () => {
+    if (!tokenValue || tokenValue === "") {
+        return;
+    }
     try {
-        const dataToSend = { token: "09124" };
+        const dataToSend = { token: sessionStorage.getItem('authToken') };
         const role = await postApi('/api/getRoleByToken', dataToSend);
         const name = await postApi('/api/getNameByToken', dataToSend);
         
