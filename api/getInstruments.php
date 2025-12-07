@@ -1,4 +1,13 @@
 <?php
+require_once __DIR__ . '/../core/database.php';
+require_once __DIR__ . '/../core/models/User.php';
+require_once __DIR__ . '/../core/models/Token.php';
+require_once __DIR__ . '/../core/models/Roles.php';
+
+$db = DB::connect($config['db_path']);
+
+$userId = UserToken::getUserIdByToken($db, $data['token']);
+$role_id = User::getRoleById($db, $userId);
 
 const ACTION_MAP = [
     'Додати користувача' => 'addUser',
@@ -21,7 +30,7 @@ const ACTION_MAP = [
 ];
 
 $tools = [['Додати користувача', 'Видалити користувача', 'Додати магазин', 'Видалити магазин'], ['Переглянути замовлення', 'Сума замовлень', 'Додати категорію', 'Видалити категорію', 'Редагувати позицію', 'Додати позицію', 'Видалити позицію', 'Редагувати позицію'], ['Історія замовлень', 'Каталог товарів', 'Поточне замовлення']];
-$selected_tools = $tools[array_rand($tools)];
+$selected_tools = $tools[$role_id - 1];
 $actions = [];
 
 foreach($selected_tools as $tool){

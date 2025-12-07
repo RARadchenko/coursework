@@ -1,7 +1,7 @@
 (async () => {
     const ulElement = document.getElementById('avaliable-instruments');
     try {
-        const dataToSend = { token: "09124" };
+        const dataToSend = { token: sessionStorage.getItem('authToken') };
         const response = await postApi('/api/getInstruments', dataToSend);
 
         const toolNames = response.tools;

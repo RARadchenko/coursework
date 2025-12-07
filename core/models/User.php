@@ -58,4 +58,11 @@ class User
         return $login; 
         }
 
+        public static function getRoleById($db, $id) {
+        $stmt = $db->prepare("SELECT role_id FROM users WHERE user_id = ?");
+        $stmt->execute([$id]);
+        $role_id = $stmt->fetchColumn(0);
+        return $role_id; 
+        }
+
 }
