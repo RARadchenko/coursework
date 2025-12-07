@@ -65,4 +65,9 @@ class User
         return $role_id; 
         }
 
+        public static function getInfoUsers($db){
+            return $db->query("SELECT * FROM user_full_info")->fetchAll(PDO::FETCH_ASSOC);
+    }
+        
+
 }

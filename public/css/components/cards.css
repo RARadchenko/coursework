@@ -5,9 +5,9 @@
     flex-wrap: wrap;
     justify-content: start;
 
-    flex: 1;   /* або будь-яка потрібна тобі висота */
-    overflow-y: auto;    /* вертикальний скрол тільки всередині */
-    overflow-x: hidden;  /* щоб не з'являвся горизонтальний */
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .card{

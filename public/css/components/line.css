@@ -1,0 +1,15 @@
+.line{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    height: auto;
+    flex-wrap: wrap;
+    max-height: 80px;
+    margin-top: 10px;
+}
+
+.line>p{
+    display: block;
+    flex: 1;
+    padding: 0 5px;
+}
