@@ -31,6 +31,12 @@ class User
         return $db->lastInsertId();
     }
 
+        public static function updateRole($db, $id, $role) {
+        $stmt = $db->prepare("UPDATE users SET role_id = ? WHERE user_id = ?");
+        $result =$stmt->execute([$role, $id]);
+        return $result;
+    }
+
         public static function getPasswordHashByLogin($db, $login) {
         $stmt = $db->prepare("SELECT password_hash FROM users WHERE login = ?");
         $stmt->execute([$login]);

@@ -36,16 +36,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     contentSection.style.flexDirection = 'column'
     contentSection.innerHTML = response.content.map(row => {
         
-        // перетворюємо об'єкт у список <p>
         const fields = Object.entries(row)
             .map(([key, value]) => `<p>${value ?? '---'}</p>`)
             .join('');
 
-        return `<div class="line">${fields}</div>`;
-    }).join('');
-}
-                
-            } catch (error) {
+            return `<div class="line">${fields}</div>`;
+                }).join('');
+                }
+                if (response.viewMap === "modal") {
+
+    openDynamicModal(response.content, (formData) => {
+        
+    });
+    
+}}
+             catch (error) {
                 console.error(error.message);
             }
         }
