@@ -4,6 +4,7 @@ require_once __DIR__ . '/../core/database.php';
 require_once __DIR__ . '/../core/models/User.php';
 require_once __DIR__ . '/../core/models/Store.php';
 require_once __DIR__ . '/../core/models/Category.php';
+require_once __DIR__ . '/../core/models/Rules.php';
 
 $db = DB::connect($config['db_path']);
 
@@ -96,6 +97,29 @@ switch($data['action']){
         $content = [
             'Категорія' => array_combine($id, $name),
             'action' => 'categoryDelete'
+        ];
+        break;
+
+        case('addRule'):
+        $content = [
+            'Мінімум' => '1',
+            'Максимум' => '999',
+            'action' => 'ruleAdd'
+        ];
+        break;
+        case('deleteRule'):
+        $rule = Rules::all($db);
+        $id = array_column($rule, 'rule_id');
+
+        $mins = array_column($rule, 'min');
+        $maxs = array_column($rule, 'max');
+        $rule_values = array_map(function ($min, $max) {
+            return $min . ' - ' . $max;
+            }, $mins, $maxs);
+
+        $content = [
+            'Правило' => array_combine($id, $rule_values),
+            'action' => 'ruleDelete'
         ];
         break;
     default:
