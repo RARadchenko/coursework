@@ -3,6 +3,7 @@ require_once __DIR__ . '/const.php';
 require_once __DIR__ . '/../core/database.php';
 require_once __DIR__ . '/../core/models/User.php';
 require_once __DIR__ . '/../core/models/Store.php';
+require_once __DIR__ . '/../core/models/Category.php';
 
 $db = DB::connect($config['db_path']);
 
@@ -49,7 +50,7 @@ switch($data['action']){
         $users = User::getManagersWithoutStore($db);
         $logins = array_column($users, 'login');
         $id = array_column($users, 'user_id');
-        $content = $content = [
+        $content = [
             
             'Назва' => 'Назва магазину',
             'Менеджер' => [-1 => 'Відсутній'] + array_combine($id, $logins),
@@ -78,6 +79,23 @@ switch($data['action']){
             'Магазин' => array_combine($id, $name),
             'Менеджер' => [-1 => 'Відсутній'] + array_combine($user_id, $logins),
             'action' => 'storeEdit'
+        ];
+        break;
+
+
+        case('addCategory'):
+        $content = [
+            'Категорія' => 'Назва категорії',
+            'action' => 'categoryAdd'
+        ];
+        break;
+        case('deleteCategory'):
+        $categories = Category::all($db);
+        $name = array_column($categories, 'name');
+        $id = array_column($categories, 'category_id');
+        $content = [
+            'Категорія' => array_combine($id, $name),
+            'action' => 'categoryDelete'
         ];
         break;
     default:
