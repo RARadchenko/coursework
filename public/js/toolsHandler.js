@@ -48,8 +48,14 @@ document.addEventListener('DOMContentLoaded', () => {
     openDynamicModal(response.content, (formData) => {
         
     });
-    
-}}
+    }
+    if (response.viewMap === "modalAddItem") {
+
+    openAddProductModal(response.content, (formData) => {
+        
+    });
+    }
+            }
              catch (error) {
                 console.error(error.message);
             }

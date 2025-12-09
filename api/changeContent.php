@@ -5,6 +5,7 @@ require_once __DIR__ . '/../core/models/User.php';
 require_once __DIR__ . '/../core/models/Store.php';
 require_once __DIR__ . '/../core/models/Category.php';
 require_once __DIR__ . '/../core/models/Rules.php';
+require_once __DIR__ . '/../core/models/Units.php';
 
 $db = DB::connect($config['db_path']);
 
@@ -120,6 +121,37 @@ switch($data['action']){
         $content = [
             'Правило' => array_combine($id, $rule_values),
             'action' => 'ruleDelete'
+        ];
+        break;
+
+        case('addItem'):
+
+        $categories = Category::all($db);
+        $cat_name = array_column($categories, 'name');
+        $cat_id = array_column($categories, 'category_id');
+
+        $rule = Rules::all($db);
+        $rule_id = array_column($rule, 'rule_id');
+
+        $units = Units::all($db);
+        $unit_id = array_column($units, 'unit_id');
+        $unit_name = array_column($units, 'name');
+
+        $mins = array_column($rule, 'min');
+        $maxs = array_column($rule, 'max');
+        $rule_values = array_map(function ($min, $max) {
+            return $min . ' - ' . $max;
+            }, $mins, $maxs);
+
+        $content = [
+            'Категорія' => array_combine($cat_id, $cat_name),
+            'Назва'=> 'назва товару',
+            'Ціна'=> '9.99',
+            'Одиниці' => array_combine($unit_id, $unit_name),
+            'Правило' => array_combine($rule_id, $rule_values),
+            'Фото'=> '',
+            'action'=> 'upload-image',
+        'action' => 'itemAdd'
         ];
         break;
     default:

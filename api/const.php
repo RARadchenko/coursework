@@ -45,7 +45,7 @@ const VIEW_MAP = [
     'deleteRule' => 'modal',
     'viewItem' => 'viewItem',
     'editItem' => 'editItem',
-    'addItem' => 'addItem',
+    'addItem' => 'modalAddItem',
     'deleteItem' => 'deleteItem',
     
     'Історія замовлень' => 'orderHistory',

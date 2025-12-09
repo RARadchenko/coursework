@@ -7,12 +7,12 @@
  */
 async function postApi(endpoint, data) {
     try {
+        const isFormData = data instanceof FormData;
+
         const res = await fetch(endpoint, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+            headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+            body: isFormData ? data : JSON.stringify(data)
         });
 
         if (!res.ok) {
@@ -26,9 +26,14 @@ async function postApi(endpoint, data) {
             throw new Error(`Помилка HTTP: ${res.status}. Деталі: ${errorDetails}`);
         }
 
-        const json = await res.json();
-        return json;
-        
+        // Якщо сервер повертає JSON — читаємо JSON
+        // Якщо сервер при FormData повертає не JSON — не буде помилки
+        try {
+            return await res.json();
+        } catch {
+            return res;
+        }
+
     } catch (error) {
         throw error;
     }
