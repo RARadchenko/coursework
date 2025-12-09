@@ -74,6 +74,13 @@ class User
         public static function getInfoUsers($db){
             return $db->query("SELECT * FROM user_full_info")->fetchAll(PDO::FETCH_ASSOC);
     }
+
+        public static function getManagersWithoutStore($db){
+            return $db->query("SELECT user_id, login FROM users WHERE role_id = 3 AND user_id NOT IN (
+        SELECT manager_id
+        FROM store
+        WHERE manager_id IS NOT NULL)")->fetchAll(PDO::FETCH_ASSOC);
+        }
         
 
 }
