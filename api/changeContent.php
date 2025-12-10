@@ -6,6 +6,7 @@ require_once __DIR__ . '/../core/models/Store.php';
 require_once __DIR__ . '/../core/models/Category.php';
 require_once __DIR__ . '/../core/models/Rules.php';
 require_once __DIR__ . '/../core/models/Units.php';
+require_once __DIR__ . '/../core/models/Products.php';
 
 $db = DB::connect($config['db_path']);
 
@@ -154,6 +155,67 @@ switch($data['action']){
         'action' => 'itemAdd'
         ];
         break;
+
+        case('viewItem'):
+        $products = Products::allForProvider($db);
+        $categories = Category::all($db);
+        $category_map = [];
+    foreach ($categories as $category) {
+        $category_map[$category['category_id']] = $category['name'];
+    }
+
+        $image_files = array_column($products, 'image_url');
+        $full_image_urls = array_map(function($file_name) {
+        return '.\/img\/' . $file_name;
+    }, $image_files);
+
+    $preparedCategories = [];
+    foreach (array_column($products, 'category_id') as $catId){
+        $preparedCategories[] = $category_map[$catId];
+    }
+
+    $rule = Rules::all($db);
+    $rule_id = array_column($rule, 'rule_id');
+    $mins = array_column($rule, 'min');
+    $maxs = array_column($rule, 'max');
+    $rule_values = array_map(function ($min, $max) {
+        return $min . ' - ' . $max;
+        }, $mins, $maxs);
+
+    $preparedRules = [];
+
+    $units = Units::all($db);
+    $unit_id = array_column($units, 'units_id');
+    $unit_name = array_column($units, 'name');
+    $unit_values = array_map(function($unit_name){
+        return $unit_name;
+    }, $unit_name);
+
+
+    $preparedUnits = [];
+    foreach (array_column($products, 'unit_id') as $unitId){
+        $preparedUnits[] = $unit_values[$unitId-1];
+    }
+
+
+    foreach (array_column($products, 'rule_id') as $ruleId){
+        $preparedRules[] = $rule_values[$ruleId-1];
+    }
+
+    $combinedRulesAndUnits = array_map(function ($rule, $unit) {
+
+    return $rule . ' ' . $unit;
+    }, $preparedRules, $preparedUnits);
+
+        $content = [
+            'image_url' => $full_image_urls,
+            'Назва' => array_column($products, 'name'),
+            'Ціна' => array_column($products, 'price'),
+            'Правило' => $combinedRulesAndUnits,
+            'Категорія' => $preparedCategories,
+        ];
+        break;
+
     default:
         break;
 }

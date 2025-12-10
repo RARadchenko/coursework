@@ -8,13 +8,17 @@ $db = DB::connect($config['db_path']);
 $image = null;
 
 if (!empty($_FILES['Фото']['tmp_name'])) {
-    $imageName = time() . "_" . $_FILES['Фото']['name'];
-    $uploadPath = __DIR__ . '/../public/img/png' . $imageName;
-
-    move_uploaded_file($_FILES['Фото']['tmp_name'], $uploadPath);
-
-    $image = $imageName;
+    
+    $originalName = $_FILES['Фото']['name'];
+    $fileExtension = pathinfo($originalName, PATHINFO_EXTENSION);
+    $imageName = time() . '.' . $fileExtension;
+    
+    $uploadPath = __DIR__ . '/../public/img/' . $imageName;
+    if (move_uploaded_file($_FILES['Фото']['tmp_name'], $uploadPath)) {
+        $image = $imageName;
+    }
 }
+
 
 $lastId = Products::create($db, $_POST['Назва'], $_POST['Ціна'], $image,  $_POST['Одиниці'], $_POST['Категорія'], $_POST['Правило']);
 
