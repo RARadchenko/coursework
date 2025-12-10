@@ -23,3 +23,9 @@
 .tools .selected{
     background-color: #e7eded;
 }
+
+@media (max-width: 768px) {
+    .tools li{
+        height: 40px !important;
+    }
+}
