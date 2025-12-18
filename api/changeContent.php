@@ -216,6 +216,21 @@ switch($data['action']){
         ];
         break;
 
+    case('deleteItem'):
+        $products = Products::allForProvider($db);
+        $id = array_column($products, 'product_id');
+        $names = array_column($products, 'name');
+        $prices = array_column($products, 'price');
+
+        $products_values = array_map(function ($name, $price) {
+            return $name . ' - ' . $price . 'грн';
+            }, $names, $prices);
+
+        $content = [
+            'Продукт' => array_combine($id, $products_values),
+            'action' => 'itemDelete'
+        ];
+        break;
     default:
         break;
 }

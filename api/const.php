@@ -46,7 +46,7 @@ const VIEW_MAP = [
     'viewItem' => 'cardsPositions',
     'editItem' => 'editItem',
     'addItem' => 'modalAddItem',
-    'deleteItem' => 'deleteItem',
+    'deleteItem' => 'modal',
     
     'Історія замовлень' => 'orderHistory',
     'Каталог товарів' => 'productCatalog',
