@@ -213,6 +213,7 @@ switch($data['action']){
             'Ціна' => array_column($products, 'price'),
             'Правило' => $combinedRulesAndUnits,
             'Категорія' => $preparedCategories,
+            'Відображення' => array_column($products, 'is_active')
         ];
         break;
 
@@ -231,6 +232,71 @@ switch($data['action']){
             'action' => 'itemDelete'
         ];
         break;
+    case('editItem'):
+        $products = Products::allForProvider($db);
+        $id = array_column($products, 'product_id');
+        $names = array_column($products, 'name');
+        $prices = array_column($products, 'price');
+
+        $products_values = array_map(function ($name, $price) {
+            return $name . ' - ' . $price . 'грн';
+            }, $names, $prices);
+
+        $content = [
+            'Продукт' => array_combine($id, $products_values),
+            'action' => 'getProduct'
+        ];
+        break;
+
+    case 'getProduct':
+
+    $productId = $data['product_id'];
+
+    $product = Products::find($db, $productId);
+
+
+    $categories = Category::all($db);
+    $cat_options = array_column($categories, 'name', 'category_id');
+
+    $units = Units::all($db);
+    $unit_options = array_column($units, 'name', 'units_id');
+
+    $rules = Rules::all($db);
+    $rule_options = [];
+    foreach ($rules as $rule) {
+        $rule_options[$rule['rule_id']] = $rule['min'] . ' - ' . $rule['max'];
+    }
+
+    $content = [
+        'Назва' => $product['name'],
+        'Ціна' => $product['price'],
+
+        'Категорія' => [
+            'options' => $cat_options,
+            'selected' => $product['category_id'] -1 
+        ],
+
+        'Одиниці' => [
+            'options' => $unit_options,
+            'selected' => $product['unit_id'] - 1
+        ],
+
+        'Правило' => [
+            'options' => $rule_options,
+            'selected' => $product['rule_id'] - 1 
+        ],
+
+        'Відображення' => [
+            'options' => ['Ні', 'Так'],
+            'selected' => $product['is_active']
+        ],
+
+        'action' => 'itemEdit'
+    ];
+
+    break;
+
+
     default:
         break;
 }

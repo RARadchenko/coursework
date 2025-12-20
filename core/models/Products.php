@@ -23,6 +23,12 @@ class Products
         return $db->lastInsertId();
     }
 
+    public static function update($db, $id, $name, $price, $unit_id, $category_id, $rule_id, $is_active){
+    $stmt = $db->prepare("UPDATE products SET name = ?, price = ?, unit_id = ?, category_id = ?, rule_id = ?, is_active = ?WHERE product_id = ?");
+    return $stmt->execute([$name, $price, $unit_id, $category_id, $rule_id, $is_active, $id]);
+    }
+
+
     public static function delete($db, $id) {
         $stmt = $db->prepare("DELETE FROM products WHERE product_id = ?");
         $stmt->execute([$id]);

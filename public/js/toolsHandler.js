@@ -50,9 +50,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     }
     if (response.viewMap === "modalAddItem") {
-
     openAddProductModal(response.content, (formData) => {
         
+    });
+    }
+    if (response.viewMap === "modalEditItem") {
+    openEditProductModal(response.content, (formData) => {
+    
     });
     }
 
@@ -69,7 +73,8 @@ if (response.viewMap === "cardsPositions") {
             name: content['Назва'][i],
             price: content['Ціна'][i],
             rule: content['Правило'][i],
-            category: content['Категорія'][i]
+            category: content['Категорія'][i],
+            is_active: content['Відображення'][i]
         });
     }
 
@@ -89,8 +94,12 @@ if (response.viewMap === "cardsPositions") {
             <p class="card-rule">${item.rule}</p>
             <p class="card-price">${item.price} грн</p>
         `;
-        
-        return categoryHeader + `<div class="card">${fields}</div>`;
+        if(item.is_active == 0){
+            return categoryHeader + `<div class="card" style="background-color: #ffecec">${fields}</div>`;
+        }
+        else{
+            return categoryHeader + `<div class="card">${fields}</div>`;
+        }
     }).join(''); 
 
 }

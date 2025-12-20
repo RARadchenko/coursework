@@ -44,9 +44,10 @@ const VIEW_MAP = [
     'addRule' => 'modal',
     'deleteRule' => 'modal',
     'viewItem' => 'cardsPositions',
-    'editItem' => 'editItem',
+    'editItem' => 'modalEditItem',
     'addItem' => 'modalAddItem',
     'deleteItem' => 'modal',
+    'getProduct' => 'null',
     
     'Історія замовлень' => 'orderHistory',
     'Каталог товарів' => 'productCatalog',

@@ -67,7 +67,6 @@ function openAddProductModal(fieldsObject, onSubmit) {
     backdrop.appendChild(modal);
     document.body.appendChild(backdrop);
 
-    // --- Submit handler ---
     btnOk.onclick = () => {
         const isMultipart = [...modal.querySelectorAll('input')]
             .some(input => input.type === 'file');
@@ -75,7 +74,6 @@ function openAddProductModal(fieldsObject, onSubmit) {
         let payload;
 
         if (isMultipart) {
-            // Якщо є фото → FormData
             payload = new FormData();
             modal.querySelectorAll('input, select').forEach(input => {
                 if (input.type === 'file') {
@@ -88,7 +86,6 @@ function openAddProductModal(fieldsObject, onSubmit) {
             });
 
         } else {
-            // Звичайний JSON
             payload = {};
             modal.querySelectorAll('input, select').forEach(input => {
                 payload[input.name] = input.value;
