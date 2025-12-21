@@ -15,7 +15,7 @@ class OrdersItems
     }
 
     public static function findByOrder($db, $order_id) {
-        $stmt = $db->prepare("SELECT * FROM order_items WHERE order_id = ?");
+        $stmt = $db->prepare("SELECT * FROM order_items WHERE order_id = ? ORDER BY item_id");
         $stmt->execute([$order_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
