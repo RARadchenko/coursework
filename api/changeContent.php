@@ -2,11 +2,14 @@
 require_once __DIR__ . '/const.php';
 require_once __DIR__ . '/../core/database.php';
 require_once __DIR__ . '/../core/models/User.php';
+require_once __DIR__ . '/../core/models/Token.php';
 require_once __DIR__ . '/../core/models/Store.php';
 require_once __DIR__ . '/../core/models/Category.php';
 require_once __DIR__ . '/../core/models/Rules.php';
 require_once __DIR__ . '/../core/models/Units.php';
 require_once __DIR__ . '/../core/models/Products.php';
+require_once __DIR__ . '/../core/models/Orders.php';
+require_once __DIR__ . '/../core/models/OrderItems.php';
 
 $db = DB::connect($config['db_path']);
 
@@ -293,9 +296,92 @@ switch($data['action']){
 
         'action' => 'itemEdit'
     ];
-
     break;
 
+    case('productCatalog'):
+        $products = Products::allForManager($db);
+        $categories = Category::all($db);
+        $category_map = [];
+    foreach ($categories as $category) {
+        $category_map[$category['category_id']] = $category['name'];
+    }
+
+        $image_files = array_column($products, 'image_url');
+        $full_image_urls = array_map(function($file_name) {
+        return '.\/img\/' . $file_name;
+    }, $image_files);
+
+    $preparedCategories = [];
+    foreach (array_column($products, 'category_id') as $catId){
+        $preparedCategories[] = $category_map[$catId];
+    }
+
+    $rule = Rules::all($db);
+
+    $rule_min_map = [];
+    $rule_max_map = [];
+
+    foreach ($rule as $r) {
+        $rule_min_map[$r['rule_id']] = $r['min'];
+        $rule_max_map[$r['rule_id']] = $r['max'];
+    }
+
+    $units = Units::all($db);
+
+    $unit_map = [];
+    foreach ($units as $u) {
+        $unit_map[$u['unit_id']] = $u['name'];
+    }
+
+    $mins = [];
+    $maxs = [];
+    $unit_names = [];
+
+    foreach ($products as $p) {
+        $mins[] = $rule_min_map[$p['rule_id']] ?? null;
+        $maxs[] = $rule_max_map[$p['rule_id']] ?? null;
+        $unit_names[] = $unit_map[$p['unit_id']] ?? null;
+    }
+
+        $content = [
+            'image_url' => $full_image_urls,
+            'Назва' => array_column($products, 'name'),
+            'Ціна' => array_column($products, 'price'),
+            'Мінімум' => $mins,
+            'Максимум' => $maxs,
+            'Вимір' => $unit_names,
+            'Категорія' => $preparedCategories,
+            'Ідентифікатор' => array_column($products, 'product_id'),
+        ];
+        break;
+
+    case('currentOrder'):
+    $userId = UserToken::getUserIdByToken($db, $data['token']);
+    $orderId = Orders::findCreatingOrder($db, $userId)['order_id'];
+    
+    $items = OrdersItems::findByOrder($db, $orderId);
+    $products = Products::all($db);
+    $units = Units::all($db);
+    
+    $prodMap = [];
+    foreach ($products as $p) $prodMap[$p['product_id']] = $p;
+    
+    $unitMap = [];
+    foreach ($units as $u) $unitMap[$u['unit_id']] = $u['name'];
+
+    $content = [];
+    foreach ($items as $item) {
+        $product = $prodMap[$item['product_id']];
+        $unitName = $unitMap[$product['unit_id']];
+
+        $content[] = [
+            'Назва' => $product['name'],
+            'Кількість' => $item['amount'] . ' ' . $unitName,
+            'Ціна' => $item['price'] . ' грн',
+            'item_id' => $item['item_id']
+        ];
+    }
+    break;
 
     default:
         break;

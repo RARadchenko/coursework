@@ -43,6 +43,49 @@ document.addEventListener('DOMContentLoaded', () => {
             return `<div class="line">${fields}</div>`;
                 }).join('');
                 }
+
+                if (response.viewMap === "lineCurrentOrder") {
+    contentSection.style.flexDirection = 'column';
+
+    // 1. Генеруємо HTML
+    contentSection.innerHTML = response.content.map(row => {
+        // Фільтруємо ключі, щоб не виводити item_id у тегах <p>
+        const fields = Object.entries(row)
+            .filter(([key]) => key !== 'item_id') 
+            .map(([key, value]) => `<p>${value ?? '---'}</p>`)
+            .join('');
+
+        // Додаємо item_id у data-id кнопки
+        return `
+            <div class="line">
+                ${fields} 
+                <button class="delete-item-btn" data-id="${row.item_id}">X</button>
+            </div>`;
+    }).join('');
+
+    contentSection.onclick = async (event) => {
+        if (event.target.classList.contains('delete-item-btn')) {
+            const btn = event.target;
+            const itemId = btn.getAttribute('data-id');
+            const parentLine = btn.closest('.line');
+            if (confirm('Видалити цей товар із замовлення?')) {
+                try {
+
+                    const dataToSend = {
+                        orderItem: itemId,
+                        token: sessionStorage.getItem('authToken')
+                    };
+                    await postApi('/api/orderItemDelete', dataToSend);
+                    parentLine.remove();
+
+                } catch (error) {
+                    console.error('Помилка запиту:', error);
+                }
+            }
+        }
+    };
+}
+
                 if (response.viewMap === "modal") {
 
     openDynamicModal(response.content, (formData) => {
@@ -101,6 +144,60 @@ if (response.viewMap === "cardsPositions") {
             return categoryHeader + `<div class="card">${fields}</div>`;
         }
     }).join(''); 
+
+}
+
+if (response.viewMap === "cardsPositionsOrder") {
+    contentSection.style.flexDirection = 'row';
+    
+    const content = response.content;
+    const count = content['Назва'].length;
+    
+    const items = [];
+    for (let i = 0; i < count; i++) {
+        items.push({
+            image_url: content['image_url'][i],
+            name: content['Назва'][i],
+            price: content['Ціна'][i],
+            min: content['Мінімум'][i],
+            max: content['Максимум'][i],
+            unit: content['Вимір'][i],
+            category: content['Категорія'][i],
+            id: content['Ідентифікатор'][i],
+        });
+    }
+
+    let previousCategory = null; 
+    
+    contentSection.innerHTML = items.map(item => {
+        let categoryHeader = '';
+        
+        if (item.category !== previousCategory) {
+            categoryHeader = `<p class="category-header">${item.category}</p>`;
+            previousCategory = item.category; 
+        }
+
+        const fields = `
+            <img src="${item.image_url.replace(/\\/g, '')}" alt="${item.name}"> 
+            <p class="card-title">${item.name}</p>
+            <p class="card-price">${item.price} грн</p>
+            <button content="${item.name}">Замовити</button>
+        `;
+            return categoryHeader + `<div class="card">${fields}</div>`;
+    }).join(''); 
+    contentSection.addEventListener('click', e => {
+    if (!e.target.matches('button')) return;
+
+    const card = e.target.closest('.card');
+    if (!card) return;
+
+    const itemName = card.querySelector('.card-title').textContent;
+
+    const item = items.find(i => i.name === itemName);
+    if (!item) return;
+
+    openOrderModal(item);
+});
 
 }
             }

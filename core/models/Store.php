@@ -8,6 +8,11 @@ class Store
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     
+    public static function findByManager($db, $id) {
+        $stmt = $db->prepare("SELECT * FROM store WHERE manager_id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     public static function all($db) {
         return $db->query("SELECT * FROM store")->fetchAll(PDO::FETCH_ASSOC);

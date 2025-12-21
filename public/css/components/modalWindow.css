@@ -30,6 +30,10 @@
     width: 100%;
 }
 
+#dynamic-modal input[type="range"] {
+    accent-color: #3686f9;
+}
+
 #dynamic-modal select {
     padding: 8px;
     width: 100%;

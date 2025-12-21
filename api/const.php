@@ -50,6 +50,6 @@ const VIEW_MAP = [
     'getProduct' => 'null',
     
     'Історія замовлень' => 'orderHistory',
-    'Каталог товарів' => 'productCatalog',
-    'Поточне замовлення' => 'currentOrder',
+    'productCatalog' => 'cardsPositionsOrder',
+    'currentOrder' => 'lineCurrentOrder',
 ];

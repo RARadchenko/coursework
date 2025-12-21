@@ -17,6 +17,10 @@ class Products
         return $db->query("SELECT * FROM products ORDER BY category_id")->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public static function allForManager($db) {
+        return $db->query("SELECT * FROM products WHERE is_active = 1 ORDER BY category_id")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public static function create($db, $name, $price, $image_url, $unit_id, $category_id, $rule_id) {
         $stmt = $db->prepare("INSERT INTO products(name, price, image_url, unit_id, category_id, rule_id) VALUES(?, ?, ?, ?, ?, ?)");
         $stmt->execute([$name, $price, $image_url, $unit_id, $category_id, $rule_id]);
