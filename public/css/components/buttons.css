@@ -9,6 +9,9 @@
     height: auto;
     display: flex;
     box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.1);
+    margin: 15px auto;
+    border: none;
+    height: 75px;
 }
 
 .offer-button:hover{
@@ -29,7 +32,7 @@ content: "";
 .offer-button>p{
     word-break: normal;
     margin: auto 0;
-    padding: 20px 0;
+    font-size: 18px;
 }
 
 .delete-item-btn{

@@ -36,7 +36,7 @@ const VIEW_MAP = [
     'deleteStore' => 'modal',
     'editStore' => 'modal',
     
-    'viewOrders' => 'cards',
+    'viewOrders' => 'line',
     'sumOrders' => 'sumOrders',
     'addCategory' => 'modal',
     'deleteCategory' => 'modal',
@@ -49,7 +49,7 @@ const VIEW_MAP = [
     'deleteItem' => 'modal',
     'getProduct' => 'null',
     
-    'Історія замовлень' => 'orderHistory',
+    'orderHistory' => 'line',
     'productCatalog' => 'cardsPositionsOrder',
     'currentOrder' => 'lineCurrentOrder',
 ];

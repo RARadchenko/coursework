@@ -10,6 +10,7 @@ require_once __DIR__ . '/../core/models/Units.php';
 require_once __DIR__ . '/../core/models/Products.php';
 require_once __DIR__ . '/../core/models/Orders.php';
 require_once __DIR__ . '/../core/models/OrderItems.php';
+require_once __DIR__ . '/../core/models/OrderStatus.php';
 
 $db = DB::connect($config['db_path']);
 
@@ -357,9 +358,55 @@ switch($data['action']){
 
     case('currentOrder'):
     $userId = UserToken::getUserIdByToken($db, $data['token']);
-    $orderId = Orders::findCreatingOrder($db, $userId)['order_id'];
+
+    $order = Orders::findCreatingOrder($db, $userId);
+
+    if ($order !== false && isset($order['order_id'])) {
+
+        $orderId = $order['order_id'];
+
+        $items = OrdersItems::findByOrder($db, $orderId);
+        $products = Products::all($db);
+        $units = Units::all($db);
+
+        $prodMap = [];
+        foreach ($products as $p) {
+            $prodMap[$p['product_id']] = $p;
+        }
+
+        $unitMap = [];
+        foreach ($units as $u) {
+            $unitMap[$u['unit_id']] = $u['name'];
+        }
+
+        $content = [];
+        foreach ($items as $item) {
+            $product = $prodMap[$item['product_id']];
+            $unitName = $unitMap[$product['unit_id']];
+
+            $content[] = [
+                'Назва' => $product['name'],
+                'Кількість' => $item['amount'] . ' ' . $unitName,
+                'Ціна' => $item['price'] . ' грн',
+                'item_id' => $item['item_id']
+            ];
+        }
+
+    } else {
+        $content = [[
+            'Помилка' => "Cпочатку необхідно додати товар до замовлення"
+        ]];
+    }
+    break;
+
+    case('orderHistory'):
+    $userId = UserToken::getUserIdByToken($db, $data['token']);
+    $orders = Orders::findByUser($db, $userId);
     
-    $items = OrdersItems::findByOrder($db, $orderId);
+    $content = [];
+    foreach($orders as $order){
+    $priceTotal = 0.0;
+    $items = OrdersItems::findByOrder($db, $order['order_id']);
     $products = Products::all($db);
     $units = Units::all($db);
     
@@ -369,19 +416,86 @@ switch($data['action']){
     $unitMap = [];
     foreach ($units as $u) $unitMap[$u['unit_id']] = $u['name'];
 
-    $content = [];
+    
+    $content[] = [
+            'Час' => $order['created_at'],
+    ];
     foreach ($items as $item) {
         $product = $prodMap[$item['product_id']];
         $unitName = $unitMap[$product['unit_id']];
-
+        $priceTotal += $item['amount'] * $item['price'];
         $content[] = [
             'Назва' => $product['name'],
             'Кількість' => $item['amount'] . ' ' . $unitName,
             'Ціна' => $item['price'] . ' грн',
-            'item_id' => $item['item_id']
+
         ];
+    };
+    $content[] = [
+        'Статус' => "Статус: " . OrderStatus::find($db, $order['status_id'])['status'],
+        'Сумма' => "Сума: " . $priceTotal . " грн"
+    ];
+    $content[] = [
+        'empty' => "",
+    ];
+};
+        break;
+
+        case('viewOrders'):
+    $userId = UserToken::getUserIdByToken($db, $data['token']);
+    $orders = Orders::allSorted($db);
+    $statuses = OrderStatus::allForProfider($db);
+    $units = Units::all($db);
+    $products = Products::all($db);
+    
+    $content = [];
+    foreach($orders as $order){
+    $priceTotal = 0.0;
+    $items = OrdersItems::findByOrder($db, $order['order_id']);
+    
+    
+    $statusOption = "<select class='order-status-select' data-order-id='" . $order['order_id'] ."'>";
+    foreach($statuses as $stat){
+        if($stat['status_id'] == $order['status_id']){
+            $statusOption = $statusOption . '<option selected value="'. $stat['status_id'] .'">'. $stat['status'] .'</option>';
+        }
+        else{
+            $statusOption = $statusOption .'<option value="'. $stat['status_id'] .'">'. $stat['status'] .'</option>';
+        }
     }
-    break;
+    $statusOption = $statusOption ."</select>";
+
+
+    $prodMap = [];
+    foreach ($products as $p) $prodMap[$p['product_id']] = $p;
+    
+    $unitMap = [];
+    foreach ($units as $u) $unitMap[$u['unit_id']] = $u['name'];
+
+    
+    $content[] = [
+            'Час' => $order['created_at'],
+    ];
+    foreach ($items as $item) {
+        $product = $prodMap[$item['product_id']];
+        $unitName = $unitMap[$product['unit_id']];
+        $priceTotal += $item['amount'] * $item['price'];
+        $content[] = [
+            'Назва' => $product['name'],
+            'Кількість' => $item['amount'] . ' ' . $unitName,
+            'Ціна' => $item['price'] . ' грн',
+
+        ];
+    };
+    $content[] = [
+        'Статус' => $statusOption,
+        'Сумма' => "Сума: " . $priceTotal . " грн"
+    ];
+    $content[] = [
+        'empty' => "",
+    ];
+};
+        break;
 
     default:
         break;

@@ -13,10 +13,20 @@ class Orders
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public static function findByUser($db, $id) {
+        $stmt = $db->prepare("SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC");
+        $stmt->execute([$id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     
 
     public static function all($db) {
         return $db->query("SELECT * FROM orders")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function allSorted($db) {
+        return $db->query("SELECT * FROM orders WHERE status_id != '1' ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public static function create($db, $user_id, $store_id, $status_id) {
@@ -30,9 +40,9 @@ class Orders
         return $stmt->execute([$user_id, $store_id, $status_id]);
     }
 
-    public static function updateStatus($db,$user_id, $store_id, $status_id){
-        $stmt = $db->prepare("UPDATE orders SET status_id = ?, WHERE order_id = ?");
-        return $stmt->execute([$status_id]);
+    public static function updateStatus($db, $status_id, $order_id){
+        $stmt = $db->prepare("UPDATE orders SET status_id = ? WHERE order_id = ?");
+        return $stmt->execute([$status_id, $order_id]);
     }
 
 

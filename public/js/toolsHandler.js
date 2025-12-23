@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 
                 if (response.viewMap === "line") {
-                    contentSection.style.flexDirection = 'column'
+                    
     contentSection.innerHTML = response.content.map(row => {
         
         const fields = Object.entries(row)
@@ -47,43 +47,77 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.viewMap === "lineCurrentOrder") {
     contentSection.style.flexDirection = 'column';
 
-    // 1. Генеруємо HTML
-    contentSection.innerHTML = response.content.map(row => {
-        // Фільтруємо ключі, щоб не виводити item_id у тегах <p>
+    const content = Array.isArray(response.content)
+        ? response.content
+        : [response.content];
+
+    contentSection.innerHTML = content.map(row => {
+
+        if (!row.item_id) {
+            return `
+                <div class="line message">
+                    ${Object.values(row)
+                        .map(v => `<p>${v}</p>`)
+                        .join('')}
+                </div>
+            `;
+        }
+
         const fields = Object.entries(row)
-            .filter(([key]) => key !== 'item_id') 
-            .map(([key, value]) => `<p>${value ?? '---'}</p>`)
+            .filter(([key]) => key !== 'item_id')
+            .map(([_, value]) => `<p>${value ?? '---'}</p>`)
             .join('');
 
-        // Додаємо item_id у data-id кнопки
         return `
             <div class="line">
-                ${fields} 
+                ${fields}
                 <button class="delete-item-btn" data-id="${row.item_id}">X</button>
-            </div>`;
+            </div>
+        `;
     }).join('');
 
-    contentSection.onclick = async (event) => {
-        if (event.target.classList.contains('delete-item-btn')) {
-            const btn = event.target;
-            const itemId = btn.getAttribute('data-id');
-            const parentLine = btn.closest('.line');
+    if (content.some(r => r.item_id)) {
+        contentSection.innerHTML += `
+            <button class="offer-button">
+                <p>Підтвердити замовлення</p>
+            </button>
+        `;
+    }
+contentSection.onclick = async (event) => {
+        const target = event.target.closest('button');
+        if (!target) return;
+
+        if (target.classList.contains('offer-button')) {
+            try {
+                await postApi('/api/applyOrder', {
+                    token: sessionStorage.getItem('authToken')
+                });
+                contentSection.innerHTML = '<p>Замовлення підтверджено</p>';
+            } catch (error) {
+                console.error('Помилка запиту:', error);
+            }
+        }
+
+        if (target.classList.contains('delete-item-btn')) {
+            const itemId = target.dataset.id;
+            const parentLine = target.closest('.line');
+
             if (confirm('Видалити цей товар із замовлення?')) {
                 try {
-
-                    const dataToSend = {
+                    await postApi('/api/orderItemDelete', {
                         orderItem: itemId,
                         token: sessionStorage.getItem('authToken')
-                    };
-                    await postApi('/api/orderItemDelete', dataToSend);
+                    });
                     parentLine.remove();
-
                 } catch (error) {
                     console.error('Помилка запиту:', error);
                 }
             }
         }
-    };
+    }
+
+
+
 }
 
                 if (response.viewMap === "modal") {
