@@ -475,6 +475,7 @@ switch($data['action']){
     
     $content[] = [
             'Час' => $order['created_at'],
+            'Магазин' => Store::find($db, $order['store_id'])['name']
     ];
     foreach ($items as $item) {
         $product = $prodMap[$item['product_id']];
@@ -496,6 +497,59 @@ switch($data['action']){
     ];
 };
         break;
+
+    case ('sumOrders'):
+    $orders   = Orders::allForTotal($db);
+    $products = Products::all($db);
+    $units    = Units::all($db);
+    $prodMap = [];
+    foreach ($products as $p) {
+        $prodMap[$p['product_id']] = $p;
+    }
+
+    $unitMap = [];
+    foreach ($units as $u) {
+        $unitMap[$u['unit_id']] = $u['name'];
+    }
+
+    $content = [];
+    $productTotals = [];
+    $grandTotal = 0.0;
+
+    foreach ($orders as $order) {
+        $items = OrdersItems::findByOrder($db, $order['order_id']);
+        foreach ($items as $item) {
+            $product = $prodMap[$item['product_id']];
+            $unit    = $unitMap[$product['unit_id']];
+            $sum = $item['amount'] * $item['price'];
+            //продукт  не зустрічався
+            if (!isset($productTotals[$item['product_id']])) {
+                $productTotals[$item['product_id']] = [
+                    'name'   => $product['name'],
+                    'unit'   => $unit,
+                    'amount' => 0,
+                    'sum'    => 0.0
+                ];
+            }
+            $productTotals[$item['product_id']]['amount'] += $item['amount'];
+            $productTotals[$item['product_id']]['sum']    += $sum;
+
+            $grandTotal += $sum;
+        }
+    }
+    foreach ($productTotals as $p) {
+        $content[] = [
+            'Товар'     => $p['name'],
+            'Кількість' => $p['amount'] . ' ' . $p['unit'],
+            'Сума'      => $p['sum'] . ' грн'
+        ];
+    }
+    $content[] = [
+        'Разом' => "Сума: " . $grandTotal . ' грн'
+    ];
+
+    break;
+
 
     default:
         break;

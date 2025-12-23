@@ -37,7 +37,7 @@ const VIEW_MAP = [
     'editStore' => 'modal',
     
     'viewOrders' => 'line',
-    'sumOrders' => 'sumOrders',
+    'sumOrders' => 'line',
     'addCategory' => 'modal',
     'deleteCategory' => 'modal',
     'editCategory' => 'modal',

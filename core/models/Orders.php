@@ -29,6 +29,10 @@ class Orders
         return $db->query("SELECT * FROM orders WHERE status_id != '1' ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public static function allForTotal($db) {
+        return $db->query("SELECT * FROM orders WHERE status_id != '2' ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public static function create($db, $user_id, $store_id, $status_id) {
         $stmt = $db->prepare("INSERT INTO orders(user_id, store_id, status_id) VALUES(?, ?, ?)");
         $stmt->execute([$user_id, $store_id, $status_id]);
